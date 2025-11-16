@@ -87,8 +87,20 @@ th {
   color: white;
   font-weight: 600;
   position: sticky;
-  top: 0;
   z-index: 10;
+}
+
+/* Sticky header rows - fix all three rows */
+thead tr:nth-child(1) th {
+  top: 0;
+}
+
+thead tr:nth-child(2) th {
+  top: 49px; /* Height of first row */
+}
+
+thead tr:nth-child(3) th {
+  top: 98px; /* Height of first + second row */
 }
 
 td {

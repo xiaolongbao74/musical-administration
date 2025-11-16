@@ -8,21 +8,21 @@ const { Readable } = require('stream');
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-// Get all songs
+// Get all songs - sorted by song_number as numeric
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM songs ORDER BY ba, song_number');
+    const result = await pool.query('SELECT * FROM songs ORDER BY CAST(song_number AS INTEGER), ba');
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Get active songs
+// Get active songs - sorted by song_number as numeric
 router.get('/active', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT * FROM songs WHERE is_active = true ORDER BY ba, song_number'
+      'SELECT * FROM songs WHERE is_active = true ORDER BY CAST(song_number AS INTEGER), ba'
     );
     res.json(result.rows);
   } catch (err) {
@@ -73,7 +73,7 @@ router.delete('/:id', async (req, res) => {
 // Export songs to CSV
 router.get('/export/csv', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM songs ORDER BY ba, song_number');
+    const result = await pool.query('SELECT * FROM songs ORDER BY CAST(song_number AS INTEGER), ba');
     const fields = ['ba', 'song_number', 'song_name', 'score_link', 'audio_link', 'is_active'];
     const csvData = parse(result.rows, { fields });
     res.header('Content-Type', 'text/csv; charset=utf-8');

@@ -9,7 +9,7 @@ router.get('/user', async (req, res) => {
       'SELECT * FROM members WHERE show_in_koubanhyou = true ORDER BY number ASC'
     );
     const songs = await pool.query(
-      'SELECT * FROM songs WHERE is_active = true ORDER BY ba, song_number'
+      'SELECT * FROM songs WHERE is_active = true ORDER BY CAST(song_number AS INTEGER), ba'
     );
     const assignments = await pool.query(
       `SELECT k.member_id, k.song_id, k.is_assigned 
@@ -38,7 +38,7 @@ router.get('/admin', async (req, res) => {
       'SELECT * FROM members WHERE show_in_koubanhyou = true ORDER BY number ASC'
     );
     const songs = await pool.query(
-      'SELECT * FROM songs WHERE is_active = true ORDER BY ba, song_number'
+      'SELECT * FROM songs WHERE is_active = true ORDER BY CAST(song_number AS INTEGER), ba'
     );
     const assignments = await pool.query(
       `SELECT k.member_id, k.song_id, k.is_assigned 
@@ -96,7 +96,7 @@ router.get('/member/:memberId', async (req, res) => {
        FROM songs s
        LEFT JOIN koubanhyou k ON s.id = k.song_id AND k.member_id = $1
        WHERE s.is_active = true
-       ORDER BY s.ba, s.song_number`,
+       ORDER BY CAST(s.song_number AS INTEGER), s.ba`,
       [memberId]
     );
     res.json(result.rows);
