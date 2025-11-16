@@ -262,9 +262,10 @@ function AdminSchedule() {
     formData.append('file', file)
 
     try {
-      await axios.post(`${API_URL}/schedules/import/csv`, formData)
+      const response = await axios.post(`${API_URL}/schedules/import/csv`, formData)
       fetchData()
-      alert('インポートが完了しました')
+      const { inserted, updated, total } = response.data
+      alert(`インポートが完了しました\n新規追加: ${inserted}件\n更新: ${updated}件\n合計: ${total}件`)
     } catch (err) {
       console.error('Error importing:', err)
       alert('インポートに失敗しました')

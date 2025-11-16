@@ -10,38 +10,159 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
 
   const venues = [...new Set(daySchedules.map(s => s.venue))]
 
+  // Calculate time range
+  const getTimeInMinutes = (timeStr) => {
+    if (!timeStr) return 0
+    const [hours, minutes] = timeStr.split(':').map(Number)
+    return hours * 60 + minutes
+  }
+
+  const getTimeRange = () => {
+    if (daySchedules.length === 0) return { start: 540, end: 1200 } // 9:00-20:00 default
+    
+    let minTime = 1440 // 24:00
+    let maxTime = 0
+    
+    daySchedules.forEach(s => {
+      const start = getTimeInMinutes(s.start_time)
+      const end = getTimeInMinutes(s.end_time)
+      if (start < minTime) minTime = start
+      if (end > maxTime) maxTime = end
+    })
+    
+    // Round to 30-minute intervals
+    minTime = Math.floor(minTime / 30) * 30
+    maxTime = Math.ceil(maxTime / 30) * 30
+    
+    return { start: minTime, end: maxTime }
+  }
+
+  const timeRange = getTimeRange()
+  const timeSlots = []
+  for (let time = timeRange.start; time <= timeRange.end; time += 30) {
+    const hours = Math.floor(time / 60)
+    const minutes = time % 60
+    timeSlots.push(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`)
+  }
+
+  const getTopPosition = (timeStr) => {
+    const minutes = getTimeInMinutes(timeStr)
+    return ((minutes - timeRange.start) / 30) * 60 // 60px per 30min
+  }
+
+  const getHeight = (startTime, endTime) => {
+    const start = getTimeInMinutes(startTime)
+    const end = getTimeInMinutes(endTime)
+    return ((end - start) / 30) * 60 // 60px per 30min
+  }
+
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '90vh' }}>
         <h2>タイムスケジュール - {date}</h2>
-        <div style={{ overflowX: 'auto' }}>
-          <table>
-            <thead>
-              <tr>
-                <th>時間</th>
-                {venues.map((venue, i) => (
-                  <th key={i}>{venue}</th>
+        <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 'calc(90vh - 150px)' }}>
+          <div style={{ display: 'flex', minWidth: `${venues.length * 200 + 80}px` }}>
+            {/* Time axis */}
+            <div style={{ width: '80px', flexShrink: 0, borderRight: '2px solid #333', position: 'relative' }}>
+              <div style={{ height: '40px', borderBottom: '1px solid #ddd', fontWeight: 'bold', padding: '10px', background: '#f5f5f5' }}>
+                時間
+              </div>
+              <div style={{ position: 'relative', height: `${timeSlots.length * 60}px` }}>
+                {timeSlots.map((time, i) => (
+                  <div 
+                    key={time} 
+                    style={{ 
+                      position: 'absolute',
+                      top: `${i * 60}px`,
+                      width: '100%',
+                      height: '60px',
+                      borderBottom: '1px solid #ddd',
+                      padding: '5px',
+                      fontSize: '12px',
+                      fontWeight: '600'
+                    }}
+                  >
+                    {time}
+                  </div>
                 ))}
-              </tr>
-            </thead>
-            <tbody>
-              {daySchedules.map((schedule, i) => (
-                <tr key={i}>
-                  <td>{schedule.start_time?.slice(0,5)} - {schedule.end_time?.slice(0,5)}</td>
-                  {venues.map((venue, j) => (
-                    <td key={j}>
-                      {schedule.venue === venue && (
-                        <div>
-                          <div><strong>{schedule.rehearsal_type}</strong></div>
-                          <div>{schedule.rehearsal_content}</div>
-                        </div>
-                      )}
-                    </td>
+              </div>
+            </div>
+
+            {/* Venue columns */}
+            {venues.map((venue, venueIndex) => (
+              <div key={venueIndex} style={{ flex: 1, minWidth: '200px', borderRight: '1px solid #ddd', position: 'relative' }}>
+                <div style={{ 
+                  height: '40px', 
+                  borderBottom: '1px solid #ddd', 
+                  fontWeight: 'bold', 
+                  padding: '10px',
+                  background: '#f5f5f5',
+                  textAlign: 'center'
+                }}>
+                  {venue}
+                </div>
+                <div style={{ position: 'relative', height: `${timeSlots.length * 60}px` }}>
+                  {/* Time grid lines */}
+                  {timeSlots.map((time, i) => (
+                    <div 
+                      key={time}
+                      style={{ 
+                        position: 'absolute',
+                        top: `${i * 60}px`,
+                        width: '100%',
+                        height: '60px',
+                        borderBottom: '1px solid #eee'
+                      }}
+                    />
                   ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  
+                  {/* Schedule blocks */}
+                  {daySchedules
+                    .filter(s => s.venue === venue)
+                    .map((schedule, i) => {
+                      const top = getTopPosition(schedule.start_time)
+                      const height = getHeight(schedule.start_time, schedule.end_time)
+                      
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            position: 'absolute',
+                            top: `${top}px`,
+                            left: '5px',
+                            right: '5px',
+                            height: `${height - 5}px`,
+                            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                            border: '1px solid #555',
+                            borderRadius: '4px',
+                            padding: '8px',
+                            color: 'white',
+                            fontSize: '12px',
+                            overflow: 'hidden',
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s'
+                          }}
+                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.02)'}
+                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                          title={`${schedule.start_time?.slice(0,5)}-${schedule.end_time?.slice(0,5)}\n${schedule.rehearsal_type}\n${schedule.rehearsal_content}`}
+                        >
+                          <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                            {schedule.start_time?.slice(0,5)}-{schedule.end_time?.slice(0,5)}
+                          </div>
+                          <div style={{ fontWeight: '600', marginBottom: '2px' }}>
+                            {schedule.rehearsal_type}
+                          </div>
+                          <div style={{ fontSize: '11px', opacity: 0.9 }}>
+                            {schedule.rehearsal_content}
+                          </div>
+                        </div>
+                      )
+                    })}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
         <button onClick={onClose} className="btn btn-secondary" style={{ marginTop: '20px' }}>
           閉じる
