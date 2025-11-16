@@ -99,34 +99,19 @@ npm run dev
    - `NODE_ENV`: production
 6. 「Create Web Service」をクリック
 
+**デプロイ完了後、バックエンドのURLをメモしてください（例: `https://koubanhyou-backend-xxxx.onrender.com`）**
+
 デプロイ後、データベーススキーマを適用：
 
 ```bash
 # Renderのシェルに接続して実行
-psql $DATABASE_URL < schema.sql
+cd backend
+psql $DATABASE_URL -f schema.sql
 ```
 
 ### 3. フロントエンドのデプロイ
 
-フロントエンドの`vite.config.js`を更新：
-
-```javascript
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    port: 3000
-  }
-})
-```
-
-`.env.production`ファイルを作成：
-
-```env
-VITE_API_URL=https://your-backend-url.onrender.com/api
-```
+⚠️ **重要:** フロントエンドをデプロイする前に、バックエンドのURLを確認してください。
 
 1. Renderダッシュボードで「New +」→「Static Site」を選択
 2. GitHubリポジトリを接続
@@ -135,9 +120,15 @@ VITE_API_URL=https://your-backend-url.onrender.com/api
    - **Root Directory**: frontend
    - **Build Command**: `npm install && npm run build`
    - **Publish Directory**: dist
-4. 環境変数を設定：
-   - `VITE_API_URL`: バックエンドのURL（例: https://koubanhyou-backend.onrender.com/api）
+4. **必須:** 環境変数を設定：
+   - **Key**: `VITE_API_URL`
+   - **Value**: `https://バックエンドのURL/api`（例: `https://koubanhyou-backend-xxxx.onrender.com/api`）
+   
+   ⚠️ 注意: 必ず末尾に `/api` を付けてください
+   
 5. 「Create Static Site」をクリック
+
+**この環境変数を設定しないと、フロントエンドがバックエンドに接続できません！**
 
 ## CSVファイルのフォーマット
 
@@ -192,6 +183,24 @@ ba,song_number,song_name,score_link,audio_link,is_active
   - 年月日をクリックすると、その日のタイムスケジュールをポップアップ表示
 
 ## トラブルシューティング
+
+### API接続エラー（404エラー）
+
+**症状:** ブラウザのコンソールに以下のようなエラーが表示される
+```
+Failed to load resource: the server responded with a status of 404 ()
+```
+
+**原因:** フロントエンドの環境変数 `VITE_API_URL` が未設定または間違っている
+
+**解決方法:**
+1. Renderダッシュボードでフロントエンドサービスを開く
+2. 「Environment」タブをクリック
+3. `VITE_API_URL` の値を確認：
+   - 正しい形式: `https://バックエンドURL/api`
+   - 末尾に `/api` があるか確認
+4. 値が間違っていれば修正して「Save Changes」
+5. 再デプロイ完了後、ページをリロード
 
 ### CSVインポート時の文字化け
 

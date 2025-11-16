@@ -10,7 +10,20 @@ const schedulesRoutes = require('./routes/schedules');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
+// CORS configuration
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://musical-administration-frontend.onrender.com',
+        'https://koubanhyou-frontend.onrender.com',
+        /\.onrender\.com$/
+      ]
+    : '*',
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Health check

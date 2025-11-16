@@ -31,7 +31,30 @@ Renderが自動的に以下を作成します：
 
 ## デプロイ後の設定
 
-### 1. データベーススキーマの適用
+### 1. バックエンドのURLを確認
+
+1. Renderダッシュボードで「koubanhyou-backend」（またはあなたのバックエンドサービス名）を開く
+2. ページ上部に表示されているURLをコピー（例: `https://koubanhyou-backend-xxxx.onrender.com`）
+
+### 2. フロントエンドに環境変数を設定 ⚠️ 重要！
+
+**この手順を必ず実行してください。実行しないとフロントエンドがバックエンドに接続できません。**
+
+1. Renderダッシュボードで「koubanhyou-frontend」（またはあなたのフロントエンドサービス名）を開く
+2. 左メニューの「Environment」をクリック
+3. 「Add Environment Variable」をクリック
+4. 以下を入力：
+   - **Key**: `VITE_API_URL`
+   - **Value**: `https://あなたのバックエンドURL/api`
+   
+   例: `https://koubanhyou-backend-xxxx.onrender.com/api`
+   
+   ⚠️ 注意: 必ず末尾に `/api` を付けてください
+   
+5. 「Save Changes」をクリック
+6. フロントエンドが自動的に再デプロイされます（3-5分かかります）
+
+### 3. データベーススキーマの適用
 
 バックエンドサービスのデプロイが完了したら、データベーススキーマを適用します：
 
@@ -55,15 +78,6 @@ cd backend
 psql $DATABASE_URL -f schema.sql
 ```
 
-### 2. フロントエンドのAPI URL設定
-
-`render.yaml`を使用した場合、環境変数は自動的に設定されます。
-
-手動デプロイの場合：
-1. フロントエンドサービスの環境変数に`VITE_API_URL`を追加
-2. 値をバックエンドのURL（例: `https://koubanhyou-backend.onrender.com/api`）に設定
-3. サービスを再デプロイ
-
 ## デプロイ後の確認
 
 1. フロントエンドのURLにアクセス（例: `https://koubanhyou-frontend.onrender.com`）
@@ -71,6 +85,25 @@ psql $DATABASE_URL -f schema.sql
 3. 香盤表とスケジュールが正しく表示されることを確認
 
 ## トラブルシューティング
+
+### API 404エラー（最も一般的な問題）
+
+**症状:** ブラウザのコンソールに「404 Not Found」エラーが表示される
+```
+Failed to load resource: the server responded with a status of 404 ()
+POST https://your-frontend.onrender.com/api/members 404 (Not Found)
+```
+
+**原因:** フロントエンドの環境変数 `VITE_API_URL` が設定されていない
+
+**解決方法:**
+
+1. Renderダッシュボードでバックエンドサービスを開き、URLをコピー
+2. フロントエンドサービスを開く
+3. 「Environment」→「Add Environment Variable」
+4. Key: `VITE_API_URL`、Value: `https://バックエンドURL/api`
+5. 「Save Changes」をクリック
+6. 再デプロイ完了後（3-5分）、ページをリロード
 
 ### サービスが起動しない
 

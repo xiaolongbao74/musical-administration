@@ -29,6 +29,5 @@ services:
     plan: free
     buildCommand: cd frontend && npm install && npm run build
     staticPublishPath: frontend/dist
-    envVars:
-      - key: VITE_API_URL
-        value: https://koubanhyou-backend.onrender.com/api
+    # NOTE: VITE_API_URL must be set manually in Render dashboard
+    # Set it to: https://your-backend-url.onrender.com/api

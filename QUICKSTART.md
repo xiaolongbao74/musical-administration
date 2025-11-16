@@ -110,9 +110,22 @@ git push -u origin main
 
 ## デプロイ後の初期設定
 
-1. バックエンドのURLを確認（例: `https://koubanhyou-backend.onrender.com`）
+### ⚠️ 重要: API URL の設定
 
-2. データベーススキーマを適用：
+**必ずこの手順を実行してください！**
+
+1. **バックエンドのURLを確認**
+   - Renderダッシュボードでバックエンドサービスを開く
+   - URLをコピー（例: `https://koubanhyou-backend-xxxx.onrender.com`）
+
+2. **フロントエンドに環境変数を設定**
+   - フロントエンドサービスを開く
+   - 「Environment」→「Add Environment Variable」
+   - Key: `VITE_API_URL`
+   - Value: `https://バックエンドURL/api`（末尾に `/api` を必ず付ける）
+   - 「Save Changes」→ 再デプロイされます（3-5分）
+
+3. **データベーススキーマを適用**
 
 ```bash
 # Renderのシェルにアクセスして実行
