@@ -1,6 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const { pool } = require('../db');
+const multer = require('multer');
+const csv = require('csv-parser');
+const { parse } = require('json2csv');
+const { Readable } = require('stream');
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Get all schedules
 router.get('/', async (req, res) => {
@@ -210,6 +216,98 @@ router.get('/date/:date', async (req, res) => {
       [date]
     );
     res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Export schedules to CSV
+router.get('/export/csv', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM schedules ORDER BY schedule_date, start_time');
+    
+    // Convert arrays to JSON strings for CSV compatibility
+    const csvData = result.rows.map(row => ({
+      ...row,
+      schedule_date: row.schedule_date ? new Date(row.schedule_date).toISOString().split('T')[0] : '',
+      target_songs: row.target_songs ? JSON.stringify(row.target_songs) : '',
+      target_roles: row.target_roles ? JSON.stringify(row.target_roles) : ''
+    }));
+    
+    const fields = ['schedule_date', 'venue', 'start_time', 'end_time', 'rehearsal_type', 'rehearsal_content', 'target_songs', 'target_roles'];
+    const csv = parse(csvData, { fields });
+    
+    res.header('Content-Type', 'text/csv; charset=utf-8');
+    res.header('Content-Disposition', 'attachment; filename=schedules.csv');
+    res.send('\uFEFF' + csv);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Import schedules from CSV
+router.post('/import/csv', upload.single('file'), async (req, res) => {
+  try {
+    const results = [];
+    let csvContent = req.file.buffer.toString('utf-8');
+    if (csvContent.charCodeAt(0) === 0xFEFF) {
+      csvContent = csvContent.slice(1);
+    }
+    const stream = Readable.from(csvContent);
+    
+    stream
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('end', async () => {
+        const client = await pool.connect();
+        try {
+          await client.query('BEGIN');
+          for (const row of results) {
+            // Parse JSON arrays
+            let targetSongs = null;
+            let targetRoles = null;
+            
+            try {
+              if (row.target_songs && row.target_songs.trim()) {
+                targetSongs = JSON.parse(row.target_songs);
+              }
+            } catch (e) {
+              console.error('Error parsing target_songs:', e);
+            }
+            
+            try {
+              if (row.target_roles && row.target_roles.trim()) {
+                targetRoles = JSON.parse(row.target_roles);
+              }
+            } catch (e) {
+              console.error('Error parsing target_roles:', e);
+            }
+            
+            await client.query(
+              `INSERT INTO schedules 
+               (schedule_date, venue, start_time, end_time, rehearsal_type, rehearsal_content, target_songs, target_roles) 
+               VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+              [
+                row.schedule_date || null,
+                row.venue || null,
+                row.start_time || null,
+                row.end_time || null,
+                row.rehearsal_type || null,
+                row.rehearsal_content || null,
+                targetSongs,
+                targetRoles
+              ]
+            );
+          }
+          await client.query('COMMIT');
+          res.json({ message: 'Import successful', count: results.length });
+        } catch (err) {
+          await client.query('ROLLBACK');
+          throw err;
+        } finally {
+          client.release();
+        }
+      });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

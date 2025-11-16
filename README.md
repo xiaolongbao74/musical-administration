@@ -166,6 +166,31 @@ ba,song_number,song_name,score_link,audio_link,is_active
 第2場,2,庭への扉,https://dropbox.com/score2.pdf,https://dropbox.com/audio2.mp3,true
 ```
 
+### スケジュール（schedules.csv）
+
+**重要:** `target_songs` と `target_roles` は JSON配列形式で記述してください。
+
+```csv
+schedule_date,venue,start_time,end_time,rehearsal_type,rehearsal_content,target_songs,target_roles
+2025-12-01,第1スタジオ,10:00,12:00,音楽稽古,第1場の曲を中心に,"[1,2,3]","[""トム"",""ハティ""]"
+2025-12-02,第1スタジオ,14:00,17:00,立ち稽古,第2場全体,"[4,5]","[]"
+```
+
+**フィールドの説明:**
+- `schedule_date`: 日付（YYYY-MM-DD形式）
+- `venue`: 会場名
+- `start_time`: 開始時間（HH:MM形式）
+- `end_time`: 終了時間（HH:MM形式）
+- `rehearsal_type`: 稽古種類
+- `rehearsal_content`: 稽古内容
+- `target_songs`: 対象曲のID配列（JSON形式、例: `[1,2,3]`、全曲対象なら `[]`）
+- `target_roles`: 対象役の配列（JSON形式、例: `["トム","ハティ"]`、全員対象なら `[]`）
+
+**注意:**
+- 配列が空の場合は `[]` と記述
+- 文字列を含む配列の場合、CSVでは `"[""値1"",""値2""]"` のように二重引用符をエスケープ
+- Excelで編集する場合は、エクスポートしたファイルを参考にしてください
+
 ## 使い方
 
 ### 初期セットアップ

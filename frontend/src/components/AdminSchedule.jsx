@@ -236,6 +236,42 @@ function AdminSchedule() {
     }
   }
 
+  const handleExport = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/schedules/export/csv`, {
+        responseType: 'blob'
+      })
+      const url = window.URL.createObjectURL(new Blob([res.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'schedules.csv')
+      document.body.appendChild(link)
+      link.click()
+      link.remove()
+    } catch (err) {
+      console.error('Error exporting:', err)
+      alert('エクスポートに失敗しました')
+    }
+  }
+
+  const handleImport = async (e) => {
+    const file = e.target.files[0]
+    if (!file) return
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    try {
+      await axios.post(`${API_URL}/schedules/import/csv`, formData)
+      fetchData()
+      alert('インポートが完了しました')
+    } catch (err) {
+      console.error('Error importing:', err)
+      alert('インポートに失敗しました')
+    }
+    e.target.value = ''
+  }
+
   const shouldBeGray = (schedule, member) => {
     if (!schedule.target_songs || schedule.target_songs.length === 0) {
       return false
@@ -279,8 +315,28 @@ function AdminSchedule() {
       }))
     } catch (err) {
       console.error('Error updating attendance:', err)
-      alert('更新に失敗しました')
     }
+  }
+
+  const handleAttendanceClick = (scheduleId, memberId) => {
+    const currentValue = getAttendanceValue(scheduleId, memberId)
+    let newValue
+    
+    // Cycle through: empty -> ○ -> △ -> × -> empty
+    if (!currentValue || currentValue === '') {
+      newValue = '○'
+    } else if (currentValue === '○') {
+      newValue = '△'
+    } else if (currentValue === '△') {
+      newValue = '×'
+    } else if (currentValue === '×') {
+      newValue = ''
+    } else {
+      // If it's custom text, clear it
+      newValue = ''
+    }
+    
+    handleAttendanceChange(scheduleId, memberId, newValue)
   }
 
   const getAttendanceValue = (scheduleId, memberId) => {
@@ -321,9 +377,21 @@ function AdminSchedule() {
           <button onClick={handleAdd} className="btn btn-primary">
             スケジュール追加
           </button>
+          <button onClick={handleExport} className="btn btn-success">
+            CSVエクスポート
+          </button>
+          <label className="btn btn-success">
+            CSVインポート
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleImport}
+              style={{ display: 'none' }}
+            />
+          </label>
         </div>
         <p style={{ color: '#7f8c8d', marginTop: '10px' }}>
-          ※出欠欄をクリックして「○」「△」「×」またはテキストを入力できます
+          ※出欠欄をクリック: ○/△/×を順番に切り替え　｜　ダブルクリック: テキスト入力
         </p>
       </div>
 
@@ -375,19 +443,27 @@ function AdminSchedule() {
                   <td 
                     key={member.id}
                     className={shouldBeGray(schedule, member) ? 'cell-gray' : ''}
+                    style={{ padding: '4px', cursor: 'pointer' }}
+                    onClick={() => handleAttendanceClick(schedule.id, member.id)}
+                    onDoubleClick={(e) => {
+                      e.stopPropagation()
+                      const newValue = prompt('出欠状況を入力してください:', getAttendanceValue(schedule.id, member.id))
+                      if (newValue !== null) {
+                        handleAttendanceChange(schedule.id, member.id, newValue)
+                      }
+                    }}
+                    title="クリック: ○/△/×を切り替え、ダブルクリック: テキスト入力"
                   >
-                    <input
-                      type="text"
-                      value={getAttendanceValue(schedule.id, member.id)}
-                      onChange={(e) => handleAttendanceChange(schedule.id, member.id, e.target.value)}
-                      style={{
-                        width: '50px',
-                        padding: '4px',
-                        border: '1px solid #ddd',
-                        borderRadius: '3px',
-                        textAlign: 'center'
-                      }}
-                    />
+                    <div style={{
+                      minHeight: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontWeight: 'bold',
+                      fontSize: '14px'
+                    }}>
+                      {getAttendanceValue(schedule.id, member.id)}
+                    </div>
                   </td>
                 ))}
               </tr>
