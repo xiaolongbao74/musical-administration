@@ -141,6 +141,26 @@ VITE_API_URL=https://your-backend-url.onrender.com/api
 
 ## CSVファイルのフォーマット
 
+**重要:** CSVファイルは **UTF-8 BOM付き** で保存してください。これにより、日本語の文字化けを防ぎます。
+
+### Excelで作成する場合
+
+1. データを入力
+2. 「ファイル」→「名前を付けて保存」
+3. ファイル形式: 「CSV UTF-8（コンマ区切り）」を選択
+4. 保存
+
+### メモ帳で作成する場合
+
+1. データを入力
+2. 「ファイル」→「名前を付けて保存」
+3. エンコード: 「UTF-8」を選択
+4. 保存
+
+### サンプルCSVファイル
+
+`sample_data/` フォルダに UTF-8 BOM付きのサンプルCSVがあります。これらをテンプレートとして使用できます。
+
 ### メンバー（members.csv）
 ```csv
 number,role,name,show_in_koubanhyou,show_in_schedule
@@ -172,6 +192,29 @@ ba,song_number,song_name,score_link,audio_link,is_active
   - 年月日をクリックすると、その日のタイムスケジュールをポップアップ表示
 
 ## トラブルシューティング
+
+### CSVインポート時の文字化け
+
+**症状:** CSVインポート後、日本語が文字化けする
+
+**原因:** CSVファイルのエンコーディングが UTF-8 BOM付きではない
+
+**解決方法:**
+
+1. **Excelを使用している場合:**
+   - 「CSV UTF-8（コンマ区切り）」形式で保存
+   - または、`sample_data/` のサンプルCSVをテンプレートとして使用
+
+2. **テキストエディタを使用している場合:**
+   - UTF-8 BOM付きで保存
+   - VS Codeの場合: 右下のエンコーディング表示をクリック → 「UTF-8 with BOM で保存」
+
+3. **既存のCSVを変換する場合（コマンドライン）:**
+   ```bash
+   # UTF-8 BOMを追加
+   printf '\xEF\xBB\xBF' > new_file.csv
+   cat old_file.csv >> new_file.csv
+   ```
 
 ### データベース接続エラー
 - `DATABASE_URL`の環境変数が正しく設定されているか確認

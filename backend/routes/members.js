@@ -102,7 +102,12 @@ router.get('/export/csv', async (req, res) => {
 router.post('/import/csv', upload.single('file'), async (req, res) => {
   try {
     const results = [];
-    const stream = Readable.from(req.file.buffer.toString('utf-8'));
+    // Remove BOM if present and ensure UTF-8 encoding
+    let csvContent = req.file.buffer.toString('utf-8');
+    if (csvContent.charCodeAt(0) === 0xFEFF) {
+      csvContent = csvContent.slice(1);
+    }
+    const stream = Readable.from(csvContent);
     
     stream
       .pipe(csv())

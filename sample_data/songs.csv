@@ -1,4 +1,4 @@
-ba,song_number,song_name,score_link,audio_link,is_active
+﻿ba,song_number,song_name,score_link,audio_link,is_active
 第1場,1,オープニング,https://www.dropbox.com/example/score1.pdf,https://www.dropbox.com/example/audio1.mp3,true
 第1場,2,庭への扉,https://www.dropbox.com/example/score2.pdf,https://www.dropbox.com/example/audio2.mp3,true
 第1場,3,時間の魔法,https://www.dropbox.com/example/score3.pdf,https://www.dropbox.com/example/audio3.mp3,true
