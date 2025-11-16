@@ -1,0 +1,8 @@
+number,role,name,show_in_koubanhyou,show_in_schedule
+1,トム,山田太郎,true,true
+2,ハティ,佐藤花子,true,true
+3,アベル,鈴木一郎,true,true
+4,ピーター,田中次郎,true,true
+5,グウェン,伊藤美咲,true,true
+6,ジェームズ,高橋健太,true,false
+7,アラン,中村良子,false,true

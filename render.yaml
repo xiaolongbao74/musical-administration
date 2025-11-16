@@ -1,0 +1,34 @@
+databases:
+  - name: koubanhyou-db
+    databaseName: koubanhyou_db
+    user: koubanhyou_user
+    plan: free
+
+services:
+  - type: web
+    name: koubanhyou-backend
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: koubanhyou-db
+          property: connectionString
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+    
+  - type: web
+    name: koubanhyou-frontend
+    env: static
+    region: singapore
+    plan: free
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: frontend/dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://koubanhyou-backend.onrender.com/api
