@@ -262,53 +262,113 @@ router.post('/import/csv', upload.single('file'), async (req, res) => {
         const client = await pool.connect();
         try {
           await client.query('BEGIN');
+          
+          let inserted = 0;
+          let updated = 0;
+          
           for (const row of results) {
+            // Parse date - support both YYYY/MM/DD and YYYY-MM-DD formats
+            let scheduleDate = null;
+            if (row.schedule_date) {
+              const dateStr = row.schedule_date.trim();
+              // Convert YYYY/MM/DD to YYYY-MM-DD
+              if (dateStr.includes('/')) {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) {
+                  scheduleDate = `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+                }
+              } else {
+                scheduleDate = dateStr;
+              }
+            }
+            
             // Parse JSON arrays
             let targetSongs = null;
             let targetRoles = null;
             
             try {
               if (row.target_songs && row.target_songs.trim()) {
-                targetSongs = JSON.parse(row.target_songs);
+                // Remove any extra quotes and whitespace
+                const songsStr = row.target_songs.trim().replace(/^["']|["']$/g, '');
+                targetSongs = JSON.parse(songsStr);
+                console.log('Parsed target_songs:', targetSongs);
               }
             } catch (e) {
-              console.error('Error parsing target_songs:', e);
+              console.error('Error parsing target_songs:', row.target_songs, e);
             }
             
             try {
               if (row.target_roles && row.target_roles.trim()) {
-                targetRoles = JSON.parse(row.target_roles);
+                // Remove any extra quotes and whitespace
+                const rolesStr = row.target_roles.trim().replace(/^["']|["']$/g, '');
+                targetRoles = JSON.parse(rolesStr);
+                console.log('Parsed target_roles:', targetRoles);
               }
             } catch (e) {
-              console.error('Error parsing target_roles:', e);
+              console.error('Error parsing target_roles:', row.target_roles, e);
             }
             
-            await client.query(
-              `INSERT INTO schedules 
-               (schedule_date, venue, start_time, end_time, rehearsal_type, rehearsal_content, target_songs, target_roles) 
-               VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-              [
-                row.schedule_date || null,
-                row.venue || null,
-                row.start_time || null,
-                row.end_time || null,
-                row.rehearsal_type || null,
-                row.rehearsal_content || null,
-                targetSongs,
-                targetRoles
-              ]
+            // Check if schedule already exists (same date, venue, and start time)
+            const existing = await client.query(
+              'SELECT id FROM schedules WHERE schedule_date = $1 AND venue = $2 AND start_time = $3',
+              [scheduleDate, row.venue, row.start_time]
             );
+            
+            if (existing.rows.length > 0) {
+              // Update existing schedule
+              await client.query(
+                `UPDATE schedules 
+                 SET end_time = $1, rehearsal_type = $2, rehearsal_content = $3, 
+                     target_songs = $4, target_roles = $5, updated_at = CURRENT_TIMESTAMP 
+                 WHERE id = $6`,
+                [
+                  row.end_time || null,
+                  row.rehearsal_type || null,
+                  row.rehearsal_content || null,
+                  targetSongs,
+                  targetRoles,
+                  existing.rows[0].id
+                ]
+              );
+              updated++;
+            } else {
+              // Insert new schedule
+              await client.query(
+                `INSERT INTO schedules 
+                 (schedule_date, venue, start_time, end_time, rehearsal_type, rehearsal_content, target_songs, target_roles) 
+                 VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+                [
+                  scheduleDate,
+                  row.venue || null,
+                  row.start_time || null,
+                  row.end_time || null,
+                  row.rehearsal_type || null,
+                  row.rehearsal_content || null,
+                  targetSongs,
+                  targetRoles
+                ]
+              );
+              inserted++;
+            }
           }
+          
           await client.query('COMMIT');
-          res.json({ message: 'Import successful', count: results.length });
+          res.json({ 
+            message: 'Import successful', 
+            inserted,
+            updated,
+            total: results.length 
+          });
         } catch (err) {
           await client.query('ROLLBACK');
+          console.error('Import error:', err);
           throw err;
         } finally {
           client.release();
         }
       });
   } catch (err) {
+    console.error('CSV import error:', err);
     res.status(500).json({ error: err.message });
   }
 });

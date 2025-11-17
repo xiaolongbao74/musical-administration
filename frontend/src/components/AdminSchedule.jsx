@@ -5,8 +5,21 @@ import axios from 'axios'
 const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 function ScheduleForm({ schedule, songs, onSubmit, onCancel }) {
+  // Format date to YYYY-MM-DD for input
+  const formatDateForInput = (dateStr) => {
+    if (!dateStr) return '';
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const [formData, setFormData] = useState(
-    schedule || {
+    schedule ? {
+      ...schedule,
+      schedule_date: formatDateForInput(schedule.schedule_date)
+    } : {
       schedule_date: '',
       venue: '',
       start_time: '',
