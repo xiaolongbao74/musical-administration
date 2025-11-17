@@ -47,13 +47,13 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
 
   const getTopPosition = (timeStr) => {
     const minutes = getTimeInMinutes(timeStr)
-    return ((minutes - timeRange.start) / 30) * 60 // 60px per 30min
+    return ((minutes - timeRange.start) / 30) * 80 // 80px per 30min
   }
 
   const getHeight = (startTime, endTime) => {
     const start = getTimeInMinutes(startTime)
     const end = getTimeInMinutes(endTime)
-    return ((end - start) / 30) * 60 // 60px per 30min
+    return ((end - start) / 30) * 80 // 80px per 30min
   }
 
   return (
@@ -67,15 +67,15 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
               <div style={{ height: '40px', borderBottom: '1px solid #ddd', fontWeight: 'bold', padding: '10px', background: '#f5f5f5' }}>
                 時間
               </div>
-              <div style={{ position: 'relative', height: `${timeSlots.length * 60}px` }}>
+              <div style={{ position: 'relative', height: `${timeSlots.length * 80}px` }}>
                 {timeSlots.map((time, i) => (
                   <div 
                     key={time} 
                     style={{ 
                       position: 'absolute',
-                      top: `${i * 60}px`,
+                      top: `${i * 80}px`,
                       width: '100%',
-                      height: '60px',
+                      height: '80px',
                       borderBottom: '1px solid #ddd',
                       padding: '5px',
                       fontSize: '12px',
@@ -101,16 +101,16 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
                 }}>
                   {venue}
                 </div>
-                <div style={{ position: 'relative', height: `${timeSlots.length * 60}px` }}>
+                <div style={{ position: 'relative', height: `${timeSlots.length * 80}px` }}>
                   {/* Time grid lines */}
                   {timeSlots.map((time, i) => (
                     <div 
                       key={time}
                       style={{ 
                         position: 'absolute',
-                        top: `${i * 60}px`,
+                        top: `${i * 80}px`,
                         width: '100%',
-                        height: '60px',
+                        height: '80px',
                         borderBottom: '1px solid #eee'
                       }}
                     />
@@ -135,10 +135,10 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
                             background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                             border: '1px solid #555',
                             borderRadius: '4px',
-                            padding: '8px',
+                            padding: '10px',
                             color: 'white',
-                            fontSize: '12px',
-                            overflow: 'hidden',
+                            fontSize: '13px',
+                            overflow: 'auto',
                             boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
                             cursor: 'pointer',
                             transition: 'transform 0.2s'
@@ -147,13 +147,13 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
                           onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                           title={`${schedule.start_time?.slice(0,5)}-${schedule.end_time?.slice(0,5)}\n${schedule.rehearsal_type}\n${schedule.rehearsal_content}`}
                         >
-                          <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                          <div style={{ fontWeight: 'bold', marginBottom: '5px', fontSize: '14px' }}>
                             {schedule.start_time?.slice(0,5)}-{schedule.end_time?.slice(0,5)}
                           </div>
-                          <div style={{ fontWeight: '600', marginBottom: '2px' }}>
+                          <div style={{ fontWeight: '600', marginBottom: '4px' }}>
                             {schedule.rehearsal_type}
                           </div>
-                          <div style={{ fontSize: '11px', opacity: 0.9 }}>
+                          <div style={{ fontSize: '12px', opacity: 0.95, lineHeight: '1.4' }}>
                             {schedule.rehearsal_content}
                           </div>
                         </div>
