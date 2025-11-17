@@ -65,9 +65,10 @@ body {
 .table-container {
   background: white;
   border-radius: 8px;
-  overflow-x: auto;
+  overflow: auto;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   margin-top: 20px;
+  max-height: calc(100vh - 200px);
 }
 
 table {
@@ -80,9 +81,11 @@ th, td {
   padding: 12px;
   text-align: center;
   border: 1px solid #ddd;
+  white-space: nowrap;
 }
 
-th {
+/* All th elements should have sticky positioning */
+thead th {
   background: #34495e;
   color: white;
   font-weight: 600;
@@ -90,17 +93,33 @@ th {
   z-index: 10;
 }
 
-/* Sticky header rows - fix all three rows */
+/* First row th elements (including rowspan ones) */
 thead tr:nth-child(1) th {
   top: 0;
 }
 
+/* Second row th elements */
 thead tr:nth-child(2) th {
-  top: 49px; /* Height of first row */
+  top: 49px;
 }
 
+/* Third row th elements */
 thead tr:nth-child(3) th {
-  top: 98px; /* Height of first + second row */
+  top: 98px;
+}
+
+/* Sticky left columns */
+.sticky-col {
+  position: sticky;
+  left: 0;
+  background: white;
+  z-index: 5;
+}
+
+/* Header cells that are both sticky vertically and horizontally need higher z-index */
+thead th.sticky-col {
+  background: #2c3e50;
+  z-index: 20;
 }
 
 td {
@@ -111,16 +130,8 @@ tr:hover td {
   background: #f8f9fa;
 }
 
-.sticky-col {
-  position: sticky;
-  left: 0;
-  background: white;
-  z-index: 5;
-}
-
-th.sticky-col {
-  z-index: 15;
-  background: #2c3e50;
+tr:hover td.sticky-col {
+  background: #f8f9fa;
 }
 
 .cell-assigned {
@@ -351,6 +362,15 @@ th.sticky-col {
   
   th, td {
     padding: 8px 4px;
+  }
+  
+  /* Adjust sticky positions for smaller row heights */
+  thead tr:nth-child(2) th {
+    top: 41px;
+  }
+  
+  thead tr:nth-child(3) th {
+    top: 82px;
   }
   
   .modal {
