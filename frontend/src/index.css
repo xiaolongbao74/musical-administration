@@ -113,30 +113,26 @@ thead tr:nth-child(3) th {
   position: sticky;
   background: white;
   z-index: 5;
+  white-space: nowrap;
+  padding: 12px 8px;
 }
 
-/* First sticky column */
+/* 第1列 - 場/年月日 */
 .sticky-col-1 {
   left: 0 !important;
-  min-width: 75px;
-  max-width: 75px;
-  width: 75px;
+  min-width: 130px;
 }
 
-/* Second sticky column - 香盤表用 */
+/* 第2列 - 曲番号/会場 */
 .sticky-col-2 {
-  left: 75px !important;  /* 第1列の幅 */
-  min-width: 85px;
-  max-width: 85px;
-  width: 85px;
+  left: 130px !important;
+  min-width: 100px;
 }
 
-/* Third sticky column - スケジュール用 */
+/* 第3列 - 時間 */
 .sticky-col-3 {
-  left: 160px !important;  /* 第1列(75px) + 第2列(85px) の幅 */
-  min-width: 100px;
-  max-width: 100px;
-  width: 100px;
+  left: 230px !important;
+  min-width: 110px;
 }
 
 /* Header cells that are sticky both vertically and horizontally */
@@ -398,23 +394,17 @@ tr:hover td.sticky-col {
   
   /* Adjust sticky column positions for smaller screens */
   .sticky-col-1 {
-    min-width: 60px;
-    max-width: 60px;
-    width: 60px;
+    min-width: 100px;
   }
   
   .sticky-col-2 {
-    left: 60px !important;
-    min-width: 70px;
-    max-width: 70px;
-    width: 70px;
+    left: 100px !important;
+    min-width: 80px;
   }
   
   .sticky-col-3 {
-    left: 130px !important;
-    min-width: 80px;
-    max-width: 80px;
-    width: 80px;
+    left: 180px !important;
+    min-width: 90px;
   }
   
   .modal {
