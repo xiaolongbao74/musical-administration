@@ -118,16 +118,25 @@ thead tr:nth-child(3) th {
 /* First sticky column */
 .sticky-col-1 {
   left: 0 !important;
+  min-width: 75px;
+  max-width: 75px;
+  width: 75px;
 }
 
-/* Second sticky column */
+/* Second sticky column - 香盤表用 */
 .sticky-col-2 {
-  left: 120px !important;
+  left: 75px !important;  /* 第1列の幅 */
+  min-width: 85px;
+  max-width: 85px;
+  width: 85px;
 }
 
-/* Third sticky column */
+/* Third sticky column - スケジュール用 */
 .sticky-col-3 {
-  left: 240px !important;
+  left: 160px !important;  /* 第1列(75px) + 第2列(85px) の幅 */
+  min-width: 100px;
+  max-width: 100px;
+  width: 100px;
 }
 
 /* Header cells that are sticky both vertically and horizontally */
@@ -388,12 +397,24 @@ tr:hover td.sticky-col {
   }
   
   /* Adjust sticky column positions for smaller screens */
+  .sticky-col-1 {
+    min-width: 60px;
+    max-width: 60px;
+    width: 60px;
+  }
+  
   .sticky-col-2 {
-    left: 80px !important;
+    left: 60px !important;
+    min-width: 70px;
+    max-width: 70px;
+    width: 70px;
   }
   
   .sticky-col-3 {
-    left: 160px !important;
+    left: 130px !important;
+    min-width: 80px;
+    max-width: 80px;
+    width: 80px;
   }
   
   .modal {
