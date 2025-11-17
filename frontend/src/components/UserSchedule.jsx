@@ -60,11 +60,33 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={e => e.stopPropagation()} style={{ maxWidth: '900px', maxHeight: '90vh' }}>
         <h2>タイムスケジュール - {date}</h2>
-        <div style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 'calc(90vh - 150px)' }}>
+        <div style={{ 
+          overflowX: 'auto', 
+          overflowY: 'auto', 
+          maxHeight: 'calc(90vh - 150px)',
+          position: 'relative'
+        }}>
           <div style={{ display: 'flex', minWidth: `${venues.length * 200 + 80}px` }}>
             {/* Time axis */}
-            <div style={{ width: '80px', flexShrink: 0, borderRight: '2px solid #333', position: 'relative' }}>
-              <div style={{ height: '40px', borderBottom: '1px solid #ddd', fontWeight: 'bold', padding: '10px', background: '#f5f5f5' }}>
+            <div style={{ 
+              width: '80px', 
+              flexShrink: 0, 
+              borderRight: '2px solid #333', 
+              position: 'sticky',
+              left: 0,
+              zIndex: 10,
+              background: 'white'
+            }}>
+              <div style={{ 
+                height: '40px', 
+                borderBottom: '1px solid #ddd', 
+                fontWeight: 'bold', 
+                padding: '10px', 
+                background: '#f5f5f5',
+                position: 'sticky',
+                top: 0,
+                zIndex: 11
+              }}>
                 時間
               </div>
               <div style={{ position: 'relative', height: `${timeSlots.length * 80}px` }}>
@@ -79,7 +101,8 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
                       borderBottom: '1px solid #ddd',
                       padding: '5px',
                       fontSize: '12px',
-                      fontWeight: '600'
+                      fontWeight: '600',
+                      background: 'white'
                     }}
                   >
                     {time}
@@ -97,7 +120,10 @@ function TimeScheduleModal({ date, schedules, onClose, selectedMember }) {
                   fontWeight: 'bold', 
                   padding: '10px',
                   background: '#f5f5f5',
-                  textAlign: 'center'
+                  textAlign: 'center',
+                  position: 'sticky',
+                  top: 0,
+                  zIndex: 9
                 }}>
                   {venue}
                 </div>
