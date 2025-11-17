@@ -352,7 +352,7 @@ function UserSchedule() {
       {showTimeSchedule && (
         <TimeScheduleModal
           date={showTimeSchedule}
-          schedules={schedules}
+          schedules={displaySchedules}
           onClose={() => setShowTimeSchedule(null)}
           selectedMember={selectedMember}
         />
