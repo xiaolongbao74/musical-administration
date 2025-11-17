@@ -65,8 +65,8 @@ function UserKoubanhyou() {
         <table>
           <thead>
             <tr>
-              <th className="sticky-col" rowSpan="3">場</th>
-              <th className="sticky-col" rowSpan="3">曲番号</th>
+              <th className="sticky-col sticky-col-1" rowSpan="3">場</th>
+              <th className="sticky-col sticky-col-2" rowSpan="3">曲番号</th>
               <th rowSpan="3">曲名</th>
               <th rowSpan="3">楽譜</th>
               <th rowSpan="3">音源</th>
@@ -95,8 +95,8 @@ function UserKoubanhyou() {
           <tbody>
             {displaySongs.map(song => (
               <tr key={song.id}>
-                <td className="sticky-col">{song.ba}</td>
-                <td className="sticky-col">M{song.song_number}</td>
+                <td className="sticky-col sticky-col-1">{song.ba}</td>
+                <td className="sticky-col sticky-col-2">M{song.song_number}</td>
                 <td>{song.song_name}</td>
                 <td>
                   {song.score_link && (

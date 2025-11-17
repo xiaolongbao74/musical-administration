@@ -400,9 +400,9 @@ function AdminSchedule() {
         <table>
           <thead>
             <tr>
-              <th className="sticky-col" rowSpan="3">年月日</th>
-              <th className="sticky-col" rowSpan="3">会場</th>
-              <th className="sticky-col" rowSpan="3">時間</th>
+              <th className="sticky-col sticky-col-1" rowSpan="3">年月日</th>
+              <th className="sticky-col sticky-col-2" rowSpan="3">会場</th>
+              <th className="sticky-col sticky-col-3" rowSpan="3">時間</th>
               <th rowSpan="3">稽古種類</th>
               <th rowSpan="3">稽古内容</th>
               <th rowSpan="3">操作</th>
@@ -424,9 +424,9 @@ function AdminSchedule() {
           <tbody>
             {schedules.map(schedule => (
               <tr key={schedule.id}>
-                <td className="sticky-col">{formatDate(schedule.schedule_date)}</td>
-                <td className="sticky-col">{schedule.venue}</td>
-                <td className="sticky-col">
+                <td className="sticky-col sticky-col-1">{formatDate(schedule.schedule_date)}</td>
+                <td className="sticky-col sticky-col-2">{schedule.venue}</td>
+                <td className="sticky-col sticky-col-3">
                   {schedule.start_time?.slice(0,5)}～{schedule.end_time?.slice(0,5)}
                 </td>
                 <td>{schedule.rehearsal_type}</td>

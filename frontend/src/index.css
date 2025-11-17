@@ -108,15 +108,29 @@ thead tr:nth-child(3) th {
   top: 98px;
 }
 
-/* Sticky left columns */
+/* Sticky left columns - base style */
 .sticky-col {
   position: sticky;
-  left: 0;
   background: white;
   z-index: 5;
 }
 
-/* Header cells that are both sticky vertically and horizontally need higher z-index */
+/* First sticky column */
+.sticky-col-1 {
+  left: 0 !important;
+}
+
+/* Second sticky column */
+.sticky-col-2 {
+  left: 120px !important;
+}
+
+/* Third sticky column */
+.sticky-col-3 {
+  left: 240px !important;
+}
+
+/* Header cells that are sticky both vertically and horizontally */
 thead th.sticky-col {
   background: #2c3e50;
   z-index: 20;
@@ -371,6 +385,15 @@ tr:hover td.sticky-col {
   
   thead tr:nth-child(3) th {
     top: 82px;
+  }
+  
+  /* Adjust sticky column positions for smaller screens */
+  .sticky-col-2 {
+    left: 80px !important;
+  }
+  
+  .sticky-col-3 {
+    left: 160px !important;
   }
   
   .modal {
