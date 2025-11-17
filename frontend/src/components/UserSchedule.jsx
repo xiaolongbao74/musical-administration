@@ -270,8 +270,8 @@ function UserSchedule() {
               <th className="sticky-col" rowSpan="3">年月日</th>
               <th className="sticky-col" rowSpan="3">会場</th>
               <th className="sticky-col" rowSpan="3">時間</th>
-              <th className="sticky-col" rowSpan="3">稽古種類</th>
-              <th className="sticky-col" rowSpan="3">稽古内容</th>
+              <th rowSpan="3">稽古種類</th>
+              <th rowSpan="3">稽古内容</th>
               {displayMembers.map(member => (
                 <th key={member.id}>{member.number}</th>
               ))}
@@ -307,8 +307,8 @@ function UserSchedule() {
                 <td className="sticky-col">
                   {schedule.start_time?.slice(0,5)}～{schedule.end_time?.slice(0,5)}
                 </td>
-                <td className="sticky-col">{schedule.rehearsal_type}</td>
-                <td className="sticky-col">{schedule.rehearsal_content}</td>
+                <td>{schedule.rehearsal_type}</td>
+                <td>{schedule.rehearsal_content}</td>
                 {displayMembers.map(member => (
                   <td 
                     key={member.id}

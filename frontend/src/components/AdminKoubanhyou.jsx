@@ -77,9 +77,9 @@ function AdminKoubanhyou() {
             <tr>
               <th className="sticky-col" rowSpan="3">場</th>
               <th className="sticky-col" rowSpan="3">曲番号</th>
-              <th className="sticky-col" rowSpan="3">曲名</th>
-              <th className="sticky-col" rowSpan="3">楽譜</th>
-              <th className="sticky-col" rowSpan="3">音源</th>
+              <th rowSpan="3">曲名</th>
+              <th rowSpan="3">楽譜</th>
+              <th rowSpan="3">音源</th>
               {members.map(member => (
                 <th key={member.id}>{member.number}</th>
               ))}
@@ -100,15 +100,15 @@ function AdminKoubanhyou() {
               <tr key={song.id}>
                 <td className="sticky-col">{song.ba}</td>
                 <td className="sticky-col">M{song.song_number}</td>
-                <td className="sticky-col">{song.song_name}</td>
-                <td className="sticky-col">
+                <td>{song.song_name}</td>
+                <td>
                   {song.score_link && (
                     <a href={song.score_link} target="_blank" rel="noopener noreferrer">
                       <button className="btn btn-small btn-primary">楽譜</button>
                     </a>
                   )}
                 </td>
-                <td className="sticky-col">
+                <td>
                   {song.audio_link && (
                     <a href={song.audio_link} target="_blank" rel="noopener noreferrer">
                       <button className="btn btn-small btn-success">音源</button>

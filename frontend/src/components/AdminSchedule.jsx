@@ -403,9 +403,9 @@ function AdminSchedule() {
               <th className="sticky-col" rowSpan="3">年月日</th>
               <th className="sticky-col" rowSpan="3">会場</th>
               <th className="sticky-col" rowSpan="3">時間</th>
-              <th className="sticky-col" rowSpan="3">稽古種類</th>
-              <th className="sticky-col" rowSpan="3">稽古内容</th>
-              <th className="sticky-col" rowSpan="3">操作</th>
+              <th rowSpan="3">稽古種類</th>
+              <th rowSpan="3">稽古内容</th>
+              <th rowSpan="3">操作</th>
               {members.map(member => (
                 <th key={member.id}>{member.number}</th>
               ))}
@@ -429,9 +429,9 @@ function AdminSchedule() {
                 <td className="sticky-col">
                   {schedule.start_time?.slice(0,5)}～{schedule.end_time?.slice(0,5)}
                 </td>
-                <td className="sticky-col">{schedule.rehearsal_type}</td>
-                <td className="sticky-col">{schedule.rehearsal_content}</td>
-                <td className="sticky-col">
+                <td>{schedule.rehearsal_type}</td>
+                <td>{schedule.rehearsal_content}</td>
+                <td>
                   <button onClick={() => handleEdit(schedule)} className="btn btn-small btn-primary">
                     編集
                   </button>
