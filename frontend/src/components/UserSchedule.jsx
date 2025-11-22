@@ -308,17 +308,21 @@ function UserSchedule() {
               ))}
             </tr>
             <tr>
-              {displayMembers.map(member => (
-                <th key={member.id}>
+            {displayMembers.map(member => (
+              <th key={member.id}>
+                {member.show_in_koubanhyou ? (
                   <span 
                     className="member-name" 
                     onClick={() => !selectedMember && handleMemberClick(member)}
                   >
                     {member.name}
                   </span>
-                </th>
-              ))}
-            </tr>
+                ) : (
+                  <span>{member.name}</span>
+                )}
+              </th>
+            ))}
+          </tr>
           </thead>
           <tbody>
             {displaySchedules.map(schedule => (
