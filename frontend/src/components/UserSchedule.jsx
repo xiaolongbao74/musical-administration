@@ -270,7 +270,7 @@ function UserSchedule() {
     const month = date.getMonth() + 1
     const day = date.getDate()
     const dayOfWeek = days[date.getDay()]
-    return `${year}/${month}/${day}(${dayOfWeek})`
+    return `${month}/${day}(${dayOfWeek})`
   }
 
   if (loading) {
