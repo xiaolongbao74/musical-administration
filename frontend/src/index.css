@@ -375,71 +375,8 @@ tr:hover td.sticky-col {
     gap: 15px;
   }
   
-  .table-container {
-    font-size: 12px;
-  }
-  
-  th, td {
-    padding: 8px 4px;
-  }
-  
-  /* Adjust sticky positions for smaller row heights */
-  thead tr:nth-child(2) th {
-    top: 41px;
-  }
-  
-  thead tr:nth-child(3) th {
-    top: 82px;
-  }
-  
-  /* Adjust sticky column positions for smaller screens */
-  .sticky-col-1 {
-    min-width: 100px;
-  }
-  
-  .sticky-col-2 {
-    left: 100px !important;
-    min-width: 80px;
-  }
-  
-  .sticky-col-3 {
-    left: 180px !important;
-    min-width: 90px;
-  }
-  
   .modal {
     width: 95%;
     padding: 20px;
-  }
-}
-
-/* スマートフォン対応：文字サイズとパディングを縮小 */
-@media (max-width: 768px) {
-  table {
-    font-size: 10px; /* デフォルトの半分程度 */
-  }
-  
-  th, td {
-    padding: 6px 2px; /* パディングを縮小 */
-    white-space: nowrap;
-  }
-  
-  /* ヘッダー行の調整 */
-  thead tr:nth-child(2) th {
-    top: 37px; /* 小さくなった分調整 */
-  }
-  
-  thead tr:nth-child(3) th {
-    top: 74px; /* 小さくなった分調整 */
-  }
-  
-  .btn-small {
-    padding: 4px 8px;
-    font-size: 10px;
-  }
-  
-  /* 年月日列を少し広めに */
-  .sticky-col:first-child {
-    min-width: 70px;
   }
 }
